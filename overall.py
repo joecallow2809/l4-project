@@ -16,5 +16,4 @@ strip_finder(circle_finder(CELL_SIZE, 1, 0), CELL_SIZE, NSIDE)
 circlea = load_file('circlea.fits')
 circleb = load_file('circleb.fits')
 
-print circlea
 
