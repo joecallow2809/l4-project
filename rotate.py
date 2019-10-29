@@ -4,23 +4,23 @@ import healpy as hp
 import matplotlib.pyplot as plt
 from astropy.io import fits
 
-data = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")
+class.hp.rotator.Rotator():
 
-NSIDE=2048
+	data = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")
 
-disc = hp.query_disc(NSIDE, (0,1,0), 0.1)
+	NSIDE=2048
 
-data[disc] = data.max()
+	disc = hp.query_disc(NSIDE, (0,1,0), 0.1)
 
-hp.mollview(data)
+	data[disc] = data.max()
 
-plt.show()
+	hp.mollview(data)
 
-rotate = hp.rotator.Rotator
+	plt.show()
 
-hp.rotator.Rotator.rotate_map_alms(rotate)
+	rotate_map_alms()
 
-hp.mollview(data)
+	hp.mollview(data)
 
-plt.show()
+	plt.show()
 
