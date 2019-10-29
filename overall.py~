@@ -6,7 +6,6 @@ from astropy.io import fits
 from circle_finder import circle_finder
 from strip import strip_finder
 from load_file import load_file
-from match_circle import match_circle
 
 
 NSIDE=2048
@@ -17,5 +16,4 @@ strip_finder(circle_finder(CELL_SIZE, 1, 0), CELL_SIZE, NSIDE)
 circlea = load_file('circlea.fits')
 circleb = load_file('circleb.fits')
 
-match_circle(circlea, circleb)
 

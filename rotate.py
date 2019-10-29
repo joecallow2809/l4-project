@@ -12,8 +12,13 @@ disc = hp.query_disc(NSIDE, (0,1,0), 0.1)
 
 data[disc] = data.max()
 
+hp.mollview(data)
 
-hp.rotator.Rotator.rotate_map_alms(data)
+plt.show()
+
+rotate = hp.rotator.Rotator
+
+hp.rotator.Rotator.rotate_map_alms(rotate)
 
 hp.mollview(data)
 

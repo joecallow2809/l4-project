@@ -4,7 +4,7 @@ import numpy as np
 
 
 def load_file(fname):
-    hdul = fits.open('/opt/local/l4astro/rbbg94/cmb_maps/'+fname)
+    hdul = fits.open(fname)
     circ_dat = hdul[1].data
     hdul.close()
     T = circ_dat['T']
