@@ -43,8 +43,6 @@ def match_circle(data1, data2):
 		    
 	norm_all = sum_val/(np.sqrt(circle1_tot)*np.sqrt(circle2_tot))    
 	m = np.amax(norm_all)
-	lag = np.argwhere(norm_all == m)
-	max_norm = norm_all[lag]
 
-	return max_norm, norm_all 
+	return m, norm_all
     

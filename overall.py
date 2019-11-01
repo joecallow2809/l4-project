@@ -19,4 +19,16 @@ strip_finder(data, circle_finder(CELL_SIZE, 1, 0), NSIDE)
 circle_a = load_file('strip_a')
 circle_b = load_file('strip_b')
 
-print match_circle(circle_a, circle_b)
+x_corr = match_circle(circle_a, circle_b)[1]
+
+
+fig, ax = plt.subplots()
+
+ax.plot(np.arange(0,360,1), x_corr)
+ax.set_title('Auto-Correlation of Circle of CMB')
+ax.set_xlabel('Lag / $\circ$')
+ax.set_ylabel('X-Correlation')
+fig.savefig('/opt/local/l4astro/rbbg94/figs/auto_corr.png', overwrite = True)
+
+
+plt.show()
