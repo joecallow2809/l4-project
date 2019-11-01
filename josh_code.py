@@ -11,10 +11,12 @@ import healpy as hp
 from astropy.io import fits
 import matplotlib.pyplot as pyplot
 
-'''Healpy'''
-data = hp.fitsfunc.read_map('/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits', field = None, nest = True)
+if __name__ == '__main__':
 
-def circle_selector(theta_i, vector, i):
+	'''Healpy'''
+	data = hp.fitsfunc.read_map('/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits', field = None, nest = True)
+
+def circle_selector(data, theta_i, vector, i):
     rad1 = 2*np.pi*(theta_i+0.35)/360
     rad2 = 2*np.pi*(theta_i-0.35)/360
     vectorb = -vector
@@ -50,14 +52,14 @@ def circle_selector(theta_i, vector, i):
     col13 = fits.Column(name='long', array=lon1, format='D')
     col14 = fits.Column(name='lat', array=lat1, format='D')
     u=fits.BinTableHDU.from_columns([col11,col12,col13,col14])
-    u.writeto(fname1, overwrite=True)
+    u.writeto('/opt/local/l4astro/rbbg94/cmb_maps/'+fname1, overwrite=True)
     
     col21 = fits.Column(name='index', array = strip2,format='D')
     col22 = fits.Column(name='T', array = strip2_data[:,0],format='D')
     col23 = fits.Column(name='long', array=lon2, format='D')
     col24 = fits.Column(name='lat', array=lat2, format='D')
     v=fits.BinTableHDU.from_columns([col21,col22,col23,col24])
-    v.writeto(fname2, overwrite=True)
+    v.writeto('/opt/local/l4astro/rbbg94/cmb_maps/'+fname2, overwrite=True)
 
 
 def load_file(fname1,fname2):
@@ -170,7 +172,7 @@ def match_circle(data1, data2):
     
     return max_norm, norm_all
 
-domains = np.arange(1, 100, 1)
+"""domains = np.arange(1, 100, 1)
 theta = y = np.zeros(len(domains))
 for i in range(len(domains)):
     y[i] = domains[i]*160
@@ -204,5 +206,5 @@ for i in range(len(theta)):
     pyplot.ylabel('Xcor')   
     pyplot.title('Circle pair at latitude +-'+str(90-round(theta[i],2)))
     pyplot.savefig(str(round(theta[i],2))+'.png')    
-    pyplot.show()
+    pyplot.show()"""
 
