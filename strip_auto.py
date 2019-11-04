@@ -11,8 +11,8 @@ CELL_SIZE = 320
 
 def strip_finder(data, ang_rad, nside):
 
-	ipix_strip1 = hp.query_strip(NSIDE, (np.pi/2)-ang_rad-(2*np.pi/360), (np.pi/2)-ang_rad+(2*np.pi/360))
-	ipix_strip2 = hp.query_strip(NSIDE, (np.pi/2)+ang_rad-(2*np.pi/360), (np.pi/2)+ang_rad+(2*np.pi/360))
+	ipix_strip1 = hp.query_strip(NSIDE, ang_rad-(np.pi/360), ang_rad+(np.pi/360))
+	ipix_strip2 = hp.query_strip(NSIDE, ang_rad-(np.pi/360), ang_rad+(np.pi/360))
 
 	strip1_data = np.zeros((len(ipix_strip1), 3))
 	strip2_data = np.zeros((len(ipix_strip2), 3))
