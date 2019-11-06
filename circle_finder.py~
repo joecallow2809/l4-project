@@ -25,9 +25,9 @@ if __name__ == '__main__':
 	angles = np.radians(np.arange(0,361, 1))
 
 	circle_0 = draw_circle(0, 0, CMB_DIST, coords_0, angles)
-	circle_x1 = draw_circle(1*CELL_SIZE, 0, CMB_DIST, coords_1, angles)
-	circle_x40 = draw_circle(40*CELL_SIZE, 0, CMB_DIST, coords_40, angles)
-	circle_y40 = draw_circle(0, 40*CELL_SIZE, CMB_DIST, coords_40, angles)
+	circle_x1 = draw_circle(1*CELL_SIZE, 0, CMB_DIST, coords_x1, angles)
+	circle_x40 = draw_circle(40*CELL_SIZE, 0, CMB_DIST, coords_x40, angles)
+	circle_y40 = draw_circle(0, 40*CELL_SIZE, CMB_DIST, coords_y40, angles)
 
 	no_of_circles = int(CMB_DIST/CELL_SIZE)*2
 	x=0

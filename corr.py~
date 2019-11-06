@@ -44,7 +44,7 @@ ax.legend(['Lag = 0$^\circ$'])
 
 fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_0.png', overwrite = True)"""
 
-strip_finder(cmb_map, circle_finder(CELL_SIZE, 3, 4), NSIDE)
+strip_finder(cmb_map, circle_finder(CELL_SIZE, 0, 0, 5), NSIDE)
 
 circle_a = load_file('strip_a')
 circle_b = load_file('strip_b')
