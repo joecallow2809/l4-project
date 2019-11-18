@@ -8,7 +8,7 @@ from astrotools import healpytools as hpt
 from circle_finder import circle_finder
 from strip_auto import strip_finder
 from load_file import load_file
-from match_circle import match_circle
+from match_circle_r import match_circle_r
 
 
 cmb_map = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")

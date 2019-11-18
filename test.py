@@ -11,27 +11,16 @@ cmb_map = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.f
 
 NSIDE=2048
 
+apo = fits.open("/opt/local/l4astro/rbbg94/cmb_maps/mask_apo5.fits")
 
-y_vec = np.array([0,1,0])
+data = apo[1].data
 
-disc = hp.query_disc(NSIDE, y_vec, 5*(np.pi/180))
+mask = data['GAL090'][:]
 
-cmb_map[disc] = cmb_map.max()
+print cmb_map, mask
 
-angle = random.uniform(0, np,pi/2)
+cmb_map_masked = cmb_map*mask
 
-cmb_map_2 = hpt.rotate_map(cmb_map, np.array([0,0,1]), angle)
-cmb_map_3 = hpt.rotate_map(cmb_map_2, np.array([0,0,1]), -angle)
+print cmb_map_masked
 
-fig, (ax1, ax2, ax3) = plt.subplots(1,3,figsize = (20,15))
-
-plt.axes(ax1)
-hp.mollview(cmb_map, min=-0.000815966, hold=True)
-plt.axes(ax2)
-hp.mollview(cmb_map_2, min=-0.000815966, hold=True)
-plt.axes(ax3)
-hp.mollview(cmb_map_3, min=-0.000815966, hold=True)
-
-fig.savefig('/opt/local/l4astro/rbbg94/figures/rotate.png', overwrite = True)
-
-plt.show()
+hp.fitsfunc.write_map('/opt/local/l4astro/rbbg94/cmb_maps/my_mask.fits', cmb_map_masked, overwrite = True)
