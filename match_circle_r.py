@@ -53,4 +53,3 @@ def match_circle_r(data1, data2):
 		norm_all = np.arange(0,359,1)
 
 	return norm_all
-    
