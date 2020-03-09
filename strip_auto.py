@@ -9,7 +9,7 @@ NSIDE=2048
 CMB_DIST = 14000
 CELL_SIZE = 320
 
-def strip_finder(data, ang_rad, nside):
+def strip_auto(data, ang_rad, nside):
 
 	ipix_strip1 = hp.query_strip(NSIDE, ang_rad-(np.pi/360), ang_rad+(np.pi/360))
 	ipix_strip2 = hp.query_strip(NSIDE, ang_rad-(np.pi/360), ang_rad+(np.pi/360))

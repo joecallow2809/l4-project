@@ -16,6 +16,7 @@ plt.xticks(np.arange(0, 91, 10))
 plt.xlim(0,90)
 ax.set_xlabel(r'$\alpha/^\circ$')
 ax.set_ylabel('Phase error/Simulation error')
+plt.tight_layout()
 
 fig.savefig('/opt/local/l4astro/rbbg94/figures/error_ratio.png', overwrite = True)
 

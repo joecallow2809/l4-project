@@ -7,10 +7,15 @@ SMICA_MAP = hp.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")
 
 NSIDE=2048
 
-strip = hp.query_strip(NSIDE, np.radians(40), np.radians(50))
+strip_1 = hp.query_strip(NSIDE, np.radians(40), np.radians(41))
 
-SMICA_MAP[strip] = SMICA_MAP.max()
+strip_2 = hp.query_strip(NSIDE, np.radians(130), np.radians(131))
 
-hp.mollview(SMICA_MAP)
+SMICA_MAP[strip_1] = SMICA_MAP.max()
+SMICA_MAP[strip_2] = SMICA_MAP.max()
+
+hp.mollview(SMICA_MAP, title = '', cbar = False)
+
+plt.savefig("/opt/local/l4astro/rbbg94/figures/cmb_map.png")
 
 plt.show()

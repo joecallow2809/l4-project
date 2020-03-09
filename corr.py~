@@ -7,76 +7,196 @@ from astrotools import healpytools as hpt
 from circle_finder import circle_finder
 from strip import strip_finder
 from load_file import load_file
-from match_circle import match_circle
+from match_circle_r import match_circle_r
+from match_circle_s import match_circle_s
 from rotate import rotate_to_top
+import time
 
+start_time = time.time()
 
 cmb_map_og = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")
+NSIDE = hp.npix2nside(len(cmb_map_og))
 
-NSIDE = 2048
+apo = fits.open("/opt/local/l4astro/rbbg94/cmb_maps/mask_apo5.fits")
+
+data = apo[1].data
+
+mask_nest = data['GAL080'][:]
+
+mask_ring = hp.pixelfunc.reorder(mask_nest, inp = 'nested', out = 'ring', n2r = True)
+
 CMB_DIST = 14000
 CELL_SIZE = 320
 
 lon = 207.8
-lat = -53.1
+lat = -56.3
 
-cmb_map = rotate_to_top(cmb_map_og, lon, lat)
+#cmb_map = np.multiply(cmb_map_og,mask_ring)
+cmb_map = rotate_to_top(np.multiply(cmb_map_og,mask_ring), lon, lat)
 
-"""ang_rad = np.zeros(87)
-x_corr = np.zeros(87)
+"""ang_rad = np.zeros(100)
+x_corr = np.zeros(100)
+a = -1
 
-for i in range(87):
-	strip_finder(cmb_map, circle_finder(CELL_SIZE, 0, 0, i), NSIDE)
+for i in range(len(ang_rad)):
+	xi = (i+1)*1
+	yi = (i+1)*0
+	if np.sqrt(xi**2+yi**2) <= 87.5:
+		strip_finder(cmb_map, circle_finder(CELL_SIZE, xi, yi), NSIDE)
 
-	circle_a = load_file('strip_a')
-	circle_b = load_file('strip_b')
+		circle_a = load_file('strip_a')
+		circle_b = load_file('strip_b')
 	
-	ang_rad[i] = (360/(2*np.pi))*circle_finder(CELL_SIZE, 0, 0, i)
-	x_corr[i] = match_circle(circle_a, circle_b)[1][0]
+		ang_rad[i] = (360/(2*np.pi))*circle_finder(CELL_SIZE, xi, yi)
+		x_corr[i] = match_circle_r(circle_a, circle_b)[0]
+		a += 1
+	else:
+		break
+
+ang_rad = ang_rad[:a]
+x_corr = x_corr[:a]
 
 fig, ax = plt.subplots()
 
 ax.plot(ang_rad, x_corr)
-ax.set_title('Correlation of Circle of CMB')
+ax.set_title('Correlation of Circle of CMB: Cold Spot, domain direction')
 ax.set_xlabel('Angular Radius')
 ax.set_ylabel('X-Correlation')
 ax.legend(['Lag = 0$^\circ$'])
+ax.axhline(0, color = 'black')
+plt.xticks(np.arange(0, 91, step=10))
+plt.xlim(0,90)
+plt.tight_layout()
 
-fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_0.png', overwrite = True)"""
+fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_pred_cold_spot__dom_dir_mask.png', overwrite = True)"""
 
-strip_finder(cmb_map, circle_finder(CELL_SIZE, 0, 0, 5), NSIDE)
+"""strip_finder(cmb_map, 88.6*(2*np.pi/360), NSIDE)
 
 circle_a = load_file('strip_a')
 circle_b = load_file('strip_b')
 	
-x_corr = match_circle(circle_a, circle_b)[1]
+#x_corr = match_circle_r(circle_a, circle_b)
+x_corr = np.zeros((360), dtype = complex)
+for i in range(len(x_corr)):
+	x_corr[i] = match_circle_s(circle_a, circle_b, i*(2*np.pi/360), 720)
 
-fig, ax = plt.subplots()
+mean = np.sum(x_corr)/np.size(x_corr)
+sum_sq = 0
+for i in range(len(x_corr)):
+	sum_sq += (x_corr[i]-mean)**2
+std_dev = np.sqrt(sum_sq/(len(x_corr)-1))
 
-ax.plot(np.arange(0,360,1), x_corr)
-ax.set_title('Correlation of Circle of CMB')
+
+fig, ax = plt.subplots(figsize=(24,10))
+
+ax.errorbar(np.arange(0,360,1), x_corr, yerr = std_dev, fmt = 'none', ecolor = 'red')
+ax.set_title('Correlation of Circle of CMB: Cold-Spot')
 ax.set_xlabel('Lag')
-ax.set_ylabel('X-Correlation')
+ax.set_ylabel('X-Correlation, S')
+ax.legend([r'$\alpha$=88.6$^\circ$'])
+ax.axhline(0, color = 'black')
+plt.xticks(np.arange(0, 361, step=30))
+plt.xlim(0,360)
+plt.tight_layout()
 
+fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_cs_ang_88.6_err_2.png', overwrite = True)"""
 
-
-"""ang_rad = np.arange(0, (2*np.pi/360)*90, (2*np.pi)/360)
-x_corr = np.zeros(len(ang_rad))
+"""ang_rad = np.arange((1/360)*2*np.pi, np.pi/2, (2*np.pi)/360)
+x_corr = np.zeros((len(ang_rad),360), dtype=complex)
 
 for i in range(len(ang_rad)):
+	rad_lag = 0
 	strip_finder(cmb_map, ang_rad[i], NSIDE)
-	
 	circle_a = load_file('strip_a')
 	circle_b = load_file('strip_b')
-	x_corr[i] = match_circle(circle_a, circle_b)[1][0]
+	for j in range(len(x_corr[i])):
+		x_corr[i,j] = match_circle_s(circle_a, circle_b, rad_lag, 720)
+		rad_lag += 2*np.pi/360				
+	print i, time.time()-start_time
 	
-ang_rad = ang_rad*(360/(2*np.pi))	
+	
+ang_rad = ang_rad*(360/(2*np.pi))
+
+x_corr_val = x_corr[:,0]
+mean = np.zeros(len(x_corr))
+std_dev = np.zeros(len(x_corr))
+for i in range(len(x_corr)):
+	sum_sq = 0
+	mean[i] = np.sqrt(np.mean((x_corr[i])^2))
+	for j in range(len(x_corr[i])):
+		sum_sq += (x_corr[i,j]-mean[i])**2
+	std_dev[i] = np.sqrt(sum_sq/(len(x_corr[i])-1))
+	
+np.savetxt('/opt/local/l4astro/rbbg94/data/cs_err_r.csv', std_dev, delimiter = ',')
+
+ax.errorbar(ang_rad, x_corr_val, yerr = std_dev, ecolor = 'red')
+ax.set_title('Cross-Correlation of Circles of CMB: Cold Spot')
+ax.set_xlabel('Angular Radius')
+ax.set_ylabel('X-Correlation: r ')
+ax.legend(['Lag=0$^\circ$'])
+ax.axhline(0, color = 'black')
+plt.xticks(np.arange(0, 91, 10))
+plt.xlim(0,90)
+plt.tight_layout()
+
+fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_0_cs_err_r.png', overwrite = True)"""
+
+"""ang_rad = np.arange((1/360)*2*np.pi, np.pi/2, (2*np.pi)/360)
+x_corr = np.zeros(len(ang_rad), dtype=complex)
+std_dev = np.genfromtxt('/opt/local/l4astro/rbbg94/data/cs_err.csv', delimiter = ',')
+
+for i in range(len(ang_rad)):
+	rad_lag = 0
+	strip_finder(cmb_map, ang_rad[i], NSIDE)
+	circle_a = load_file('strip_a')
+	circle_b = load_file('strip_b')
+	x_corr[i] = match_circle_s(circle_a, circle_b, rad_lag, 720)
+	if x_corr[i] == 0:
+		std_dev[i] = 0
+	
+
+ang_rad = ang_rad*(360/(2*np.pi))
 
 fig, ax = plt.subplots()
 
-ax.plot(ang_rad, x_corr)
-ax.set_title('Correlation of Circle of CMB')
-ax.set_xlabel('Angular Radius')
-ax.set_ylabel('X-Correlation')"""
+ax.errorbar(ang_rad, x_corr, yerr = std_dev, ecolor = 'red')
+ax.set_xlabel(r'$\alpha/^\circ$')
+ax.set_ylabel('$S$')
+ax.annotate('Lag=0$^\circ$', xy = (0.8,0.95), xycoords = 'axes fraction', bbox=dict(facecolor='none', edgecolor='black'))
+ax.axhline(0, color = 'black')
+plt.xticks(np.arange(0, 91, 10))
+plt.xlim(0,90)
+plt.tight_layout()
+
+fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_0_cs_err_no_title.png', overwrite = True)"""
+
+ang_rad = np.arange((1/360)*2*np.pi, np.pi/2, (2*np.pi)/360)
+corr = np.zeros(len(ang_rad), dtype=complex)
+
+for i in range(len(ang_rad)):
+	rad_lag = 0
+	strip_finder(cmb_map, ang_rad[i], NSIDE)
+	circle_a = load_file('strip_a')
+	circle_b = load_file('strip_b')
+	corr[i] = match_circle_s(circle_a, circle_b, rad_lag, 720)
+
+print time.time()-start_time
+	
+
+ang_rad = ang_rad*(360/(2*np.pi))
+
+fig, ax = plt.subplots()
+
+ax.plot(ang_rad, corr)
+ax.set_xlabel(r'$\alpha/^\circ$')
+ax.set_ylabel('$S$')
+ax.set_title('Slow S: CS')
+ax.annotate('Lag=0$^\circ$', xy = (0.8,0.95), xycoords = 'axes fraction', bbox=dict(facecolor='none', edgecolor='black'))
+ax.axhline(0, color = 'black')
+plt.xticks(np.arange(0, 91, 10))
+plt.xlim(0,90)
+plt.tight_layout()
+
+fig.savefig('/opt/local/l4astro/rbbg94/figures/corr_0_cs_slow.png', overwrite = True)
 
 plt.show()

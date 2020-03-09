@@ -1,33 +1,23 @@
 from __future__ import division
 import numpy as np
-import healpy as hp
-import random
-import matplotlib.pyplot as plt
-from astropy.io import fits
-from astrotools import healpytools as hpt
-from strip import strip_finder
-from load_file import load_file
-from rotate import rotate_to_top
+import time
 
 
-cmb_map = hp.fitsfunc.read_map("/opt/local/l4astro/rbbg94/cmb_maps/planck_data.fits")
 
-NSIDE=hp.npix2nside(len(cmb_map))
+array = np.full((100,50),2)
+array_2 = np.arange(0,10,0.1)
 
-apo = fits.open("/opt/local/l4astro/rbbg94/cmb_maps/mask_no_apo.fits")
+start = time.time()
+array = np.swapaxes(array, 0,1)
+array_3 = array**array_2
+array_3 = np.swapaxes(array_3, 0,1)
+print time.time()-start
+print array_3
 
-data = apo[1].data
+array = np.full((100,50),2)
+start = time.time()
+for i in range(5):
+		array[:,i] = array[:,i]**array_2
+print time.time()-start
+print array
 
-mask_nest = data['GAL090'][:]
-
-mask_ring = hp.pixelfunc.reorder(mask_nest, inp = 'nested', out = 'ring', n2r = True)
-
-cmb_map_masked = cmb_map*mask_ring
-
-diff = cmb_map-cmb_map_masked
-
-hp.mollview(cmb_map)
-hp.mollview(cmb_map_masked)
-print diff
-hp.mollview(diff)
-plt.show()

@@ -1,8 +1,8 @@
 from __future__ import division
 import numpy as np
 
-def match_circle_r(data1, data2):
-	
+def match_circle_s_fast(data1, data2, phase):
+
 	T1_bin = [[] for _ in range(360)]
 	T2_bin = [[] for _ in range(360)]
 
@@ -41,28 +41,23 @@ def match_circle_r(data1, data2):
 			T[1,i] = T2_binn[1,i]/T2_binn[0,i]
 		else:
 			T[1,i] = 0
+		
+	s_den = 0
+	m = np.arange(0,360,1)
+	T_m_a = np.fft.fft((T[0]))
+	T_m_b = np.fft.fft((T[1]))
+	T_m_a_sum = np.abs(np.sum(T_m_a))
+	T_m_b_sum = np.abs(np.sum(T_m_b))
+	lag = np.full(360, np.exp(-1j*phase))
+	m_lag = np.multiply(m,lag)
+	T_m_a = np.multiply(T_m_a, m)
+	for m in range(360):
+		s_den += m*((T_m_a_sum)**2+(T_m_b_sum)**2)
 
-
-	sum_val = np.zeros(360)
-	ind_val = np.zeros((360, len(T[0])))
-	circle1_tot = 0
-	circle2_tot = 0
-
-	for i in range(360):
-		circle1_tot += T[0,i]**2
-		circle2_tot += T[1,i]**2
-		for j in range(len(T[0])):
-		    if i + j >= 360:
-		        x = (i + j - 360)
-		    else:
-		        x = (i + j)
-			ind_val[i][j] = T[0,x]*T[1,j]
-		    sum_val[i] = sum_val[i] + ind_val[i][j]
-	
-	if circle1_tot != 0 or circle2_tot != 0:
-		norm_all = sum_val/(np.sqrt(circle1_tot)*np.sqrt(circle2_tot))    
+	if s_den != 0:
+		s_m = (2*np.multiply(T_m_a,np.conj(T_m_b)))/s_den
+		s = np.sum(np.multiply(s_m, m_lag))
 	else:
-		norm_all = np.arange(0,360,1)
-
-	return norm_all
-    
+		s=0
+	
+	return s
