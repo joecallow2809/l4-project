@@ -12,6 +12,8 @@ from match_circle_s import match_circle_s
 from rotate import rotate_to_top
 import time
 
+# Program that compared data sets, returned their correlations and the errors on those correlation values
+
 start = time.time()
 
 CMB_DIST = 14000
