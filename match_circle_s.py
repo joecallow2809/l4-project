@@ -2,6 +2,8 @@ from __future__ import division
 import numpy as np
 import time
 
+# Function which compares two data sets and returns a number corresponding to how similar they are
+
 def match_circle_s(data1, data2, phase, bins, m_max):
 
 	T_m_1 = np.full((m_max,bins), np.exp(-1j), dtype = complex)
